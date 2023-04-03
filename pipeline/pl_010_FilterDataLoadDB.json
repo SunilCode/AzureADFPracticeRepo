@@ -1,0 +1,183 @@
+{
+	"name": "pl_010_FilterDataLoadDB",
+	"properties": {
+		"activities": [
+			{
+				"name": "LookupFileData",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "SourceSalesData",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "FilterSalesData",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "LookupFileData",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LookupFileData').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@greaterOrEquals(int(item().Price), 100)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ForEachSalesData",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterSalesData",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterSalesData').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "StoredProcToInsertData",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[sp_SalesFilteredDataInsert]",
+								"storedProcedureParameters": {
+									"CityId": {
+										"value": {
+											"value": "@item().CityId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"cost": {
+										"value": {
+											"value": "@item().Cost",
+											"type": "Expression"
+										},
+										"type": "Double"
+									},
+									"CustomerId": {
+										"value": {
+											"value": "@item().CustomerId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"DeilveryDate": {
+										"value": {
+											"value": "@item().DeilveryDate",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"DiscountPercent": {
+										"value": {
+											"value": "@item().DiscountPercent",
+											"type": "Expression"
+										},
+										"type": "Double"
+									},
+									"ItemID": {
+										"value": {
+											"value": "@item().ItemId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"OrderNo": {
+										"value": {
+											"value": "@item().OrderNo",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"Price": {
+										"value": {
+											"value": "@item().Price",
+											"type": "Expression"
+										},
+										"type": "Double"
+									},
+									"Qty": {
+										"value": {
+											"value": "@item().Qty",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"SalesDate": {
+										"value": {
+											"value": "@item().SalesDate",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "azureDB_connection",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"VarX": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-03-10T18:39:39Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

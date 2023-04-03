@@ -1,0 +1,167 @@
+{
+	"name": "dfTransformation",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "dsTextTransformation",
+						"type": "DatasetReference"
+					},
+					"name": "dfSource1"
+				},
+				{
+					"dataset": {
+						"referenceName": "dsDelimitedTransfomation2",
+						"type": "DatasetReference"
+					},
+					"name": "dfsource2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable1Transform",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "cast1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "surrogateKey1"
+				},
+				{
+					"name": "cast2"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "sort1"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "rank1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {Customer Id} as string,",
+				"          Age as string,",
+				"          City as string,",
+				"          State as string,",
+				"          Name as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> dfSource1",
+				"source(output(",
+				"          OrderNo as string,",
+				"          ItemID as string,",
+				"          SalesDate as string,",
+				"          DeilveryDate as string,",
+				"          CustomerId as string,",
+				"          CityId as string,",
+				"          Qty as string,",
+				"          Price as string,",
+				"          cost as string,",
+				"          DiscountPercent as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> dfsource2",
+				"dfSource1 cast(output(",
+				"          {Customer Id} as integer,",
+				"          Age as integer,",
+				"          City as string,",
+				"          State as string,",
+				"          Name as string",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"cast1 select(mapColumn(",
+				"          CustomerId = {Customer Id},",
+				"          Age,",
+				"          City,",
+				"          State,",
+				"          CustomerName = Name",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 derive(CustomerName = replace(CustomerName,' ','')) ~> derivedColumn1",
+				"derivedColumn1 keyGenerate(output(SurgKey as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"dfsource2 cast(output(",
+				"          OrderNo as integer,",
+				"          ItemID as integer,",
+				"          SalesDate as date 'dd-MM-yyyy',",
+				"          DeilveryDate as date 'dd-MM-yyyy',",
+				"          CustomerId as integer,",
+				"          CityId as integer,",
+				"          Qty as integer,",
+				"          Price as float,",
+				"          cost as float,",
+				"          DiscountPercent as float",
+				"     ),",
+				"     errors: true) ~> cast2",
+				"cast2 filter(CustomerId < 100) ~> filter1",
+				"filter1 sort(asc(CustomerId, true),",
+				"     caseInsensitive: true) ~> sort1",
+				"surrogateKey1, sort1 join(select1@CustomerId == cast2@CustomerId,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 select(mapColumn(",
+				"          CustomerId = select1@CustomerId,",
+				"          Age,",
+				"          City,",
+				"          State,",
+				"          CustomerName,",
+				"          SurgKey,",
+				"          OrderNo,",
+				"          ItemID,",
+				"          SalesDate,",
+				"          DeilveryDate,",
+				"          CustomerId = cast2@CustomerId,",
+				"          CityId,",
+				"          Qty,",
+				"          Price,",
+				"          cost,",
+				"          DiscountPercent",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 rank(asc(cost, true),",
+				"     output(RNK as long)) ~> rank1",
+				"rank1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}

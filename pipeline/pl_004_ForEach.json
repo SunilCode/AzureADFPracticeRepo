@@ -1,0 +1,54 @@
+{
+	"name": "pl_004_ForEach",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEachCountry",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.ParamCountries",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "SetVarCountries",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "VarCountryName",
+								"value": {
+									"value": "@item()",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"ParamCountries": {
+				"type": "array",
+				"defaultValue": [
+					"India",
+					"US",
+					"UK",
+					"Germany"
+				]
+			}
+		},
+		"variables": {
+			"VarCountryName": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-03-10T10:39:41Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

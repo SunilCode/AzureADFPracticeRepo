@@ -1,0 +1,30 @@
+{
+	"name": "SourceSalesData",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "adls_connection3",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "SalesData.txt",
+				"folderPath": "SourceRawFiles",
+				"fileSystem": "sourcecontainer"
+			},
+			"columnDelimiter": "\t",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Order No\tItem ID\tSales Date\tDeilvery Date\tCustomer Id\tCity Id\tQty\tPrice\tcost\tDiscount Percent",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

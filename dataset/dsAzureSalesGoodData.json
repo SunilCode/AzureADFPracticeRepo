@@ -1,0 +1,132 @@
+{
+	"name": "dsAzureSalesGoodData",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "azureDB_connection",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ORDERNUMBER",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "QUANTITY_ORDERED",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRICEEACH",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "ORDERLINENUMBER",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SALES",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "ORDERDATE",
+				"type": "date"
+			},
+			{
+				"name": "STATUS",
+				"type": "varchar"
+			},
+			{
+				"name": "QTR_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MONTH_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "YEAR_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCTLINE",
+				"type": "varchar"
+			},
+			{
+				"name": "MSRP",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCTCODE",
+				"type": "varchar"
+			},
+			{
+				"name": "CUSTOMERNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "PHONE",
+				"type": "varchar"
+			},
+			{
+				"name": "ADDRESSLINE1",
+				"type": "varchar"
+			},
+			{
+				"name": "ADDRESSLINE2",
+				"type": "varchar"
+			},
+			{
+				"name": "CITY",
+				"type": "varchar"
+			},
+			{
+				"name": "STATE",
+				"type": "varchar"
+			},
+			{
+				"name": "POSTALCODE",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "COUNTRY",
+				"type": "varchar"
+			},
+			{
+				"name": "TERRITORY",
+				"type": "varchar"
+			},
+			{
+				"name": "CONTACTLASTNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "CONTACTFIRSTNAME",
+				"type": "varchar"
+			},
+			{
+				"name": "DEALSIZE",
+				"type": "varchar"
+			},
+			{
+				"name": "FileName",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "SALES_DATA"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

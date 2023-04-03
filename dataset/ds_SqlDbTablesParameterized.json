@@ -1,0 +1,28 @@
+{
+	"name": "ds_SqlDbTablesParameterized",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "linkedServiceSQLDatabaseParameterised",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"PardbNAme": "azurecloudsqldb"
+			}
+		},
+		"parameters": {
+			"ParTableName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": {
+				"value": "@dataset().ParTableName",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

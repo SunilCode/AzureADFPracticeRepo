@@ -1,0 +1,159 @@
+{
+	"name": "df_ScdType2",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "dsEmpData",
+						"type": "DatasetReference"
+					},
+					"name": "sourceEmpData"
+				},
+				{
+					"dataset": {
+						"referenceName": "dsEmpTable",
+						"type": "DatasetReference"
+					},
+					"name": "sourceEmpDataTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable3",
+						"type": "DatasetReference"
+					},
+					"name": "sinkEmpTable"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable3",
+						"type": "DatasetReference"
+					},
+					"name": "sinkEmpDataTable1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumnIsActive"
+				},
+				{
+					"name": "selectTableColums"
+				},
+				{
+					"name": "lookupSourceFileData"
+				},
+				{
+					"name": "filterExistingRow"
+				},
+				{
+					"name": "selectTableColumns"
+				},
+				{
+					"name": "derivedIsActiveColumn"
+				},
+				{
+					"name": "alterRowUpdateRow"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EmpId as integer,",
+				"          EmpName as string,",
+				"          EmpSalary as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sourceEmpData",
+				"source(output(",
+				"          Surrkey as integer,",
+				"          EmpId as integer,",
+				"          Ename as string,",
+				"          Salary as integer,",
+				"          IsActive as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> sourceEmpDataTable",
+				"sourceEmpData derive(IsActive = 'Y') ~> derivedColumnIsActive",
+				"sourceEmpDataTable select(mapColumn(",
+				"          Tgt_Surrkey = Surrkey,",
+				"          Tgt_EmpId = EmpId,",
+				"          Tgt_Ename = Ename,",
+				"          Tgt_Salary = Salary,",
+				"          Tgt_IsActive = IsActive",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectTableColums",
+				"sourceEmpData, selectTableColums lookup(EmpId == Tgt_EmpId,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> lookupSourceFileData",
+				"lookupSourceFileData filter(!isNull(Tgt_EmpId)) ~> filterExistingRow",
+				"filterExistingRow select(mapColumn(",
+				"          Tgt_Surrkey,",
+				"          Tgt_EmpId,",
+				"          Tgt_Ename,",
+				"          Tgt_Salary,",
+				"          Tgt_IsActive",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectTableColumns",
+				"selectTableColumns derive(Tgt_IsActive = 'N') ~> derivedIsActiveColumn",
+				"derivedIsActiveColumn alterRow(updateIf(1==1)) ~> alterRowUpdateRow",
+				"derivedColumnIsActive sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Surrkey as integer,",
+				"          EmpId as integer,",
+				"          Ename as string,",
+				"          Salary as integer,",
+				"          IsActive as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 2,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          EmpId,",
+				"          Ename = EmpName,",
+				"          Salary = EmpSalary,",
+				"          IsActive",
+				"     )) ~> sinkEmpTable",
+				"alterRowUpdateRow sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Surrkey as integer,",
+				"          EmpId as integer,",
+				"          Ename as string,",
+				"          Salary as integer,",
+				"          IsActive as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:true,",
+				"     upsertable:false,",
+				"     keys:['Surrkey'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          Surrkey = Tgt_Surrkey,",
+				"          EmpId = Tgt_EmpId,",
+				"          Ename = Tgt_Ename,",
+				"          Salary = Tgt_Salary,",
+				"          IsActive = Tgt_IsActive",
+				"     )) ~> sinkEmpDataTable1"
+			]
+		}
+	}
+}

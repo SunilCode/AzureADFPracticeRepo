@@ -1,0 +1,31 @@
+{
+	"name": "pl_009_StoredProcedure",
+	"properties": {
+		"activities": [
+			{
+				"name": "StoredProcedureExecute",
+				"description": "StoredProcedure activity is used to run proc in database not to return any value in pipeline",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[sp_employee_test]"
+				},
+				"linkedServiceName": {
+					"referenceName": "azureDB_connection",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-03-10T17:30:01Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

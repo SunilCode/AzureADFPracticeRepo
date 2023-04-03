@@ -1,0 +1,63 @@
+{
+	"name": "df_ScdType1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "df_empdataScd1",
+						"type": "DatasetReference"
+					},
+					"name": "srcEmpData"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable2",
+						"type": "DatasetReference"
+					},
+					"name": "sinkEmpTable"
+				}
+			],
+			"transformations": [
+				{
+					"name": "alterRowTransformation"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EmpId as integer,",
+				"          EmpName as string,",
+				"          EmpSalary as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> srcEmpData",
+				"srcEmpData alterRow(upsertIf(1==1)) ~> alterRowTransformation",
+				"alterRowTransformation sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          EmpID as integer,",
+				"          EmpName as string,",
+				"          EmpSalary as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:false,",
+				"     upsertable:true,",
+				"     keys:['EmpID'],",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          EmpID = EmpId,",
+				"          EmpName,",
+				"          EmpSalary",
+				"     )) ~> sinkEmpTable"
+			]
+		}
+	}
+}

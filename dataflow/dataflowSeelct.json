@@ -1,0 +1,61 @@
+{
+	"name": "dataflowSeelct",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "dsTextSelect",
+						"type": "DatasetReference"
+					},
+					"name": "SourceSelectTransformation"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SinkAzureSql",
+						"type": "DatasetReference"
+					},
+					"name": "SinkSQL"
+				}
+			],
+			"transformations": [
+				{
+					"name": "selectTransformation"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {City Id} as integer,",
+				"          City as string,",
+				"          {State          } as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     limit: 100,",
+				"     ignoreNoFilesFound: false) ~> SourceSelectTransformation",
+				"SourceSelectTransformation select(mapColumn(",
+				"          CityId = {City Id},",
+				"          City",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> selectTransformation",
+				"selectTransformation sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          CityId,",
+				"          City",
+				"     )) ~> SinkSQL"
+			]
+		}
+	}
+}

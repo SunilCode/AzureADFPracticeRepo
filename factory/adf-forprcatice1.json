@@ -1,0 +1,20 @@
+{
+	"name": "adf-forprcatice1",
+	"properties": {
+		"globalParameters": {
+			"GlobalPar": {
+				"type": "string",
+				"value": "Sunil"
+			}
+		},
+		"globalConfigurations": {
+			"PipelineBillingEnabled": "true"
+		}
+	},
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "c3a3f2b4-f1f0-44de-aaed-08dc3ed12e34",
+		"tenantId": "3b404a0c-9cdd-4c6e-adf6-b010c80282be"
+	}
+}

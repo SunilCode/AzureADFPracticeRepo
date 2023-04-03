@@ -1,0 +1,93 @@
+{
+	"name": "df_compareSourceTarget",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText7",
+						"type": "DatasetReference"
+					},
+					"name": "sourceFileData"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable5",
+						"type": "DatasetReference"
+					},
+					"name": "targetTableData"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText8",
+						"type": "DatasetReference"
+					},
+					"name": "sinkNotMatchingRecords"
+				}
+			],
+			"transformations": [
+				{
+					"name": "hashColumnSource"
+				},
+				{
+					"name": "hashTargetColumns"
+				},
+				{
+					"name": "existsDataSourceInTarget"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          SN as string,",
+				"          {First Name} as string,",
+				"          {Last Name} as string,",
+				"          Gender as string,",
+				"          Country as string,",
+				"          Age as string,",
+				"          Date as string,",
+				"          Id as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sourceFileData",
+				"source(output(",
+				"          SN as string,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          Gender as string,",
+				"          Country as string,",
+				"          Age as string,",
+				"          Date as string,",
+				"          Id as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> targetTableData",
+				"sourceFileData derive(HashColumnSourceFile = sha2(256,columns())) ~> hashColumnSource",
+				"targetTableData derive(HashTargetColumns = sha2(256,columns())) ~> hashTargetColumns",
+				"hashColumnSource, hashTargetColumns exists(HashColumnSourceFile == HashTargetColumns,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> existsDataSourceInTarget",
+				"existsDataSourceInTarget sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          CustomerId as string,",
+				"          Age as string,",
+				"          City as string,",
+				"          State as string,",
+				"          Name as string,",
+				"          FileName as string,",
+				"          InsertTimeStamp as string",
+				"     ),",
+				"     partitionFileNames:['NotMatchingRecords.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkNotMatchingRecords"
+			]
+		}
+	}
+}

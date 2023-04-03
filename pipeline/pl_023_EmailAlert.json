@@ -1,0 +1,99 @@
+{
+	"name": "pl_023_EmailAlert",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopyFileSource",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DelimitedText1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DelimitedText2",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "WebActivityToSendEmails",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "CopyFileSource",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-43.eastus.logic.azure.com:443/workflows/aec76c5e67d84cf1a2f83039e1d97184/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xiBAPKicRjsUZ7jVaL6BnMh0HUwWZs3WFMPuxAwlcEQ",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "applictaion/json"
+					},
+					"body": {
+						"value": "{\n  \"Pipeline\" : \"@{pipeline().Pipeline}\",\n  \"ErrorMessage\" : \"@{activity('CopyFileSource').Error.Message}\",\n  \"DataFactoryName\" : \"@{pipeline().DataFactory}\",\n  \"RunId\" : \"@{pipeline().RunId}\"\n}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-04-03T10:45:46Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

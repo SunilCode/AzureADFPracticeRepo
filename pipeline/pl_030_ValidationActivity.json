@@ -1,0 +1,24 @@
+{
+	"name": "pl_030_ValidationActivity",
+	"properties": {
+		"activities": [
+			{
+				"name": "Validation1",
+				"type": "Validation",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DelimitedText1",
+						"type": "DatasetReference"
+					},
+					"timeout": "0.12:00:00",
+					"sleep": 10
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-04-03T10:45:47Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

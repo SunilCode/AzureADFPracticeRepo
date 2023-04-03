@@ -1,0 +1,72 @@
+{
+	"name": "df_IncrementalDataLoad",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_AzureCustomerTable",
+						"type": "DatasetReference"
+					},
+					"name": "SrcCustomerTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dsTargetCustomerDataBlob",
+						"type": "DatasetReference"
+					},
+					"name": "TgtCustomerDataBlob"
+				}
+			],
+			"transformations": [
+				{
+					"name": "castSourceData"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {Customer Id} as integer,",
+				"          Age as integer,",
+				"          City as string,",
+				"          State as string,",
+				"          Name as string,",
+				"          FileName as string,",
+				"          InsertTimeStamp as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     enableCdc: true,",
+				"     mode: 'read',",
+				"     skipInitialLoad: true,",
+				"     waterMarkColumn: 'InsertTimeStamp',",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table',",
+				"     partitionBy('hash', 1)) ~> SrcCustomerTable",
+				"SrcCustomerTable cast(output(",
+				"          {Customer Id} as integer,",
+				"          Age as integer,",
+				"          City as string,",
+				"          State as string,",
+				"          Name as string,",
+				"          FileName as string,",
+				"          InsertTimeStamp as date 'dd-MM-yyyy'",
+				"     ),",
+				"     errors: true) ~> castSourceData",
+				"castSourceData sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     mapColumn(",
+				"          CustomerId = {Customer Id},",
+				"          Age,",
+				"          City,",
+				"          State,",
+				"          Name,",
+				"          FileName,",
+				"          InsertTimeStamp",
+				"     )) ~> TgtCustomerDataBlob"
+			]
+		}
+	}
+}

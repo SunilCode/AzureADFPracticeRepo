@@ -1,0 +1,34 @@
+{
+	"name": "pl_022_SCDType2",
+	"properties": {
+		"activities": [
+			{
+				"name": "df_ScdType2",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_ScdType2",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-03-30T15:42:03Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

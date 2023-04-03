@@ -1,0 +1,43 @@
+{
+	"name": "pl_006_Delete",
+	"properties": {
+		"activities": [
+			{
+				"name": "DeleteActivity",
+				"description": "Supported dataset type: Azure blob, Amazon S3, Azure Data lake Storage Gen1, Azure Data lake Storage Gen2, File Share associated with FTP, SFTP and File System linked service.",
+				"type": "Delete",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "FileInTarget",
+						"type": "DatasetReference"
+					},
+					"logStorageSettings": {
+						"linkedServiceName": {
+							"referenceName": "adls_connection3",
+							"type": "LinkedServiceReference"
+						},
+						"path": "targetcontainer"
+					},
+					"enableLogging": true,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-03-10T11:29:21Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

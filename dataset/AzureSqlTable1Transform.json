@@ -1,0 +1,17 @@
+{
+	"name": "AzureSqlTable1Transform",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "azureDB_connection",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "TranformData"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

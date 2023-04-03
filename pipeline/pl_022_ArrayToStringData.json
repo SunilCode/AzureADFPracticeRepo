@@ -1,0 +1,104 @@
+{
+	"name": "pl_022_ArrayToStringData",
+	"properties": {
+		"activities": [
+			{
+				"name": "LookupEmails",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "ds_emails",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEachEmailID",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "LookupEmails",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LookupEmails').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "SetTempVarEmail",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "VarTempEmail",
+								"value": {
+									"value": "@concat(item().EmailId,':',variables('VarEmailId'))",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "SetVarEmail",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "SetTempVarEmail",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "VarTempEmail",
+								"value": {
+									"value": "@variables('VarEmailId')",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"VarEmailId": {
+				"type": "String"
+			},
+			"VarTempEmail": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-03-30T12:47:08Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,44 @@
+{
+	"name": "pl_012_ExecutePipelineActivity",
+	"properties": {
+		"activities": [
+			{
+				"name": "ExecutePipeline1",
+				"description": "to call/execute another pipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_001_CopySpecificFilesWithinAdls",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ExecutePipeline1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_005_AppendVariable",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-03-12T09:54:13Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
