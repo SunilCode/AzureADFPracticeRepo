@@ -1,0 +1,45 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-forprcatice1"
+		},
+		"LinkedServiceAzureBlob_connectionString": {
+			"value": ""
+		},
+		"LinkedServiceDataLakeGen2_accountKey": {
+			"value": ""
+		},
+		"LinkedServicesBlobStorage_connectionString": {
+			"value": ""
+		},
+		"adls_connection3_accountKey": {
+			"value": ""
+		},
+		"azureDB_connection_connectionString": {
+			"value": ""
+		},
+		"linkedServiceSQLDatabaseParameterised_connectionString": {
+			"value": ""
+		},
+		"HttpServer1_properties_typeProperties_url": {
+			"value": "https://file-examples.com/wp-content/uploads/2017/02/zip_2MB.zip"
+		},
+		"LinkedServiceDataLakeGen2_properties_typeProperties_url": {
+			"value": "https://adlsstorage1gen2.dfs.core.windows.net/"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"value": "https://reqres.in/api/users"
+		},
+		"adls_connection3_properties_typeProperties_url": {
+			"value": "https://adlsstorage1gen2.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
