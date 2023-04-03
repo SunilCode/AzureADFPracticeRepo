@@ -1,0 +1,22 @@
+{
+	"name": "pl_031_WaitActivityDemo",
+	"properties": {
+		"activities": [
+			{
+				"name": "Wait1",
+				"type": "Wait",
+				"dependsOn": [],
+				"userProperties": [
+					{
+						"name": "WaitActivityToWaitSometime",
+						"value": "5"
+					}
+				],
+				"typeProperties": {
+					"waitTimeInSeconds": 5
+				}
+			}
+		],
+		"annotations": []
+	}
+}
